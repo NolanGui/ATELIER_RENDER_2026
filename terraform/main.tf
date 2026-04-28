@@ -12,11 +12,18 @@ provider "render" {
   owner_id = var.render_owner_id
 }
 
+# --- Déclaration des variables manquantes ---
+variable "render_api_key" { type = string }
+variable "render_owner_id" { type = string }
+variable "image_url"      { type = string }
+variable "image_tag"      { type = string; default = "latest" }
+
 variable "github_actor" {
   description = "GitHub username"
   type        = string
 }
 
+# --- Ressource corrigée ---
 resource "render_web_service" "flask_app" {
   name   = "flask-render-iac-${var.github_actor}"
   plan   = "free"
@@ -28,10 +35,11 @@ resource "render_web_service" "flask_app" {
       tag       = var.image_tag
     }
   }
-}
 
-env_vars = {
-  ENV = {
-    value = "production"
+  # IMPORTANT : Le bloc env_vars doit être ICI, à l'intérieur de la ressource
+  env_vars = {
+    ENV = {
+      value = "production"
+    }
   }
 }
